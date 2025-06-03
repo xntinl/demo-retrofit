@@ -2,6 +2,9 @@ package com.global.demo.github;
 
 import lombok.Data;
 
+/**
+ * Representation of a Github user returned by the Github API.
+ */
 @Data
 public class User {
     private String login;

@@ -16,21 +16,40 @@ import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+/**
+ * Provides the Retrofit clients used to communicate with external services.
+ * All clients share a common configuration that includes Jackson for JSON
+ * serialization and an HTTP logging interceptor.
+ */
 @Configuration
 @Slf4j
 public class RestClientConfiguration {
 
-
+    /**
+     * Creates the Github API client.
+     *
+     * @param githubEndpoint endpoint configuration
+     * @return a configured {@link GithubApi} implementation
+     */
     @Bean
     GithubApi githubApi(EndpointsConfig.Endpoint githubEndpoint) {
         return retroFitConfiguration(githubEndpoint).create(GithubApi.class);
     }
 
+    /**
+     * Creates the Rick and Morty API client.
+     *
+     * @param rickandmortyEndpoint endpoint configuration
+     * @return a configured {@link RickAndMortyApi} implementation
+     */
     @Bean
     RickAndMortyApi rickAndMortyApi(EndpointsConfig.Endpoint rickandmortyEndpoint) {
         return retroFitConfiguration(rickandmortyEndpoint).create(RickAndMortyApi.class);
     }
 
+    /**
+     * Builds a Retrofit instance using the provided endpoint configuration.
+     */
     private Retrofit retroFitConfiguration(EndpointsConfig.Endpoint endpoint) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -41,6 +60,10 @@ public class RestClientConfiguration {
                 .addConverterFactory(JacksonConverterFactory.create(getObjectMapper()))
                 .build();
     }
+
+    /**
+     * Creates the {@link ObjectMapper} instance shared by the clients.
+     */
     private ObjectMapper getObjectMapper() {
         return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .setDateFormat(new StdDateFormat())
